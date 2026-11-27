@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1511">
+<title>FanScore DJ — Version 2</title>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=KOZwbmxmxwUKdwsJtmTZk-wjrIfMg1y35aGJysATCaf0Sv_ffqkILPa111yCzLlKkRoy0psAZG292Beg8GOlbAaEOrkP3P-WYR9ndqv3z7WDenjaelmoPD6AsIvOINKMl_EdU48bcYBzbZjW24YZnvGZLqXKW7Yj0vyBKoAnOqhwC3uxF5UwA30HXSJR0luaIjt3Q0sza-QzI20So0AbtkMBvmqJ0DhSa3dlVcy0weTmEGY3ajgNiORF9HLTG6Vw25_ovuoLrm67HTgkiKJpcQ" charset="UTF-8"></script><style>
+:root{--bg:#0b1511;--panel:#14211b;--line:#294033;--green:#56df89;--muted:#a2b8aa;--text:#f1f8f3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.app{max-width:520px;margin:auto;min-height:100vh;background:#0e1913}
+header{padding:20px 18px 15px;background:linear-gradient(135deg,#1d603b,#10281b);position:sticky;top:0;z-index:2}
+.brand{font-size:23px;font-weight:900}.brand span{color:var(--green)}.tag{font-size:12px;color:#c5e8d0;margin-top:4px}
+main{padding:15px}.heading{font-size:21px;font-weight:850;margin:4px 0}.muted{font-size:12px;color:var(--muted)}
+.card{border:1px solid var(--line);background:var(--panel);padding:14px;border-radius:15px;margin:12px 0}
+input,button{font:inherit}input{width:100%;padding:11px;border-radius:9px;border:1px solid #365342;background:#0c1711;color:white;margin:6px 0}
+button{border:1px solid #365342;background:#203027;color:#d2e2d7;border-radius:9px;padding:10px 8px;cursor:pointer}
+button.primary{background:var(--green);color:#0b2414;border-color:var(--green);font-weight:800}
+button:disabled{opacity:.5}
+.row{display:flex;gap:8px}.row button{flex:1}.match{border:1px solid var(--line);background:var(--panel);padding:13px;border-radius:16px;margin-bottom:11px}
+.teams{display:flex;align-items:center;justify-content:space-between;text-align:center;margin:10px 0}.team{width:40%;font-weight:750;font-size:13px}.versus{color:var(--green);font-weight:900}
+.choices{display:flex;gap:6px;margin-top:12px}.choice{flex:1;font-size:12px}.choice.selected{background:var(--green);color:#0b2414}
+nav{position:sticky;bottom:0;display:flex;background:#101c16;border-top:1px solid #293b31;justify-content:space-around;padding:8px 2px;z-index:2}.tab{border:0;background:transparent;color:#91a99a;font-size:11px}.tab.active{color:var(--green);font-weight:900}.tab span{display:block;font-size:18px;margin-bottom:2px}
+.view{display:none}.view.active{display:block}.toast{background:#285b3b;color:#d1ffdf;padding:10px;border-radius:10px;margin:10px 0}.leader{display:flex;align-items:center;gap:10px;padding:11px;border-bottom:1px solid #26372e}.rank{width:28px;color:#8eeab1;font-weight:900}.name{flex:1;font-size:13px}.score{color:var(--green);font-weight:900}
+small{color:var(--muted)}footer{text-align:center;color:#718b7b;font-size:10px;padding:14px}
+</style>
+</head>
+<body><div class="app">
+<header><div class="brand">⚽ FAN<span>SCORE</span> DJ</div><div class="tag">Version 2 · Pronostics gratuits · Aucun pari</div><div id="status" class="tag">Base de données non configurée</div></header>
+<main>
+<section id="setup" class="card">
+<h3>🔌 Connecter FanScore DJ</h3>
+<p class="muted">Colle ici la clé publique Publishable/anon copiée dans Supabase. Ne colle jamais une clé Secret ou service_role.</p>
+<input id="key" placeholder="Clé publique Supabase (sb_publishable_…)" autocomplete="off">
+<button class="primary" id="connect">Connecter</button>
+</section>
+<section id="auth" class="card" style="display:none">
+<h3>👤 Compte joueur</h3>
+<input id="nickname" placeholder="Pseudo (pour inscription)">
+<input id="email" type="email" placeholder="Adresse e-mail">
+<input id="password" type="password" placeholder="Mot de passe">
+<div class="row"><button id="signup" class="primary">Créer un compte</button><button id="login">Connexion</button></div>
+<button id="logout" style="display:none;margin-top:8px">Déconnexion</button>
+<div id="authmsg" class="muted"></div>
+</section>
+<div id="toast" class="toast" style="display:none"></div>
+<section id="home" class="view active"><h2 class="heading">⚽ Matchs</h2><p class="muted">Les rencontres ajoutées à la base apparaîtront ici.</p><div id="matches"></div></section>
+<section id="ranking" class="view"><h2 class="heading">🏆 Classement partagé</h2><div id="leaders" class="card">Connecte la base pour afficher le classement.</div></section>
+<section id="profile" class="view"><h2 class="heading">👤 Mon profil</h2><div class="card" id="profileinfo">Connecte-toi pour afficher ton profil.</div></section>
+</main>
+<nav><button class="tab active" data-page="home"><span>🏠</span>Accueil</button><button class="tab" data-page="ranking"><span>🏆</span>Classement</button><button class="tab" data-page="profile"><span>👤</span>Profil</button></nav>
+<footer>FanScore DJ · Gratuit, sans mise d'argent. Version test.</footer>
+</div>
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2';
+const URL='https://seegkcomvgqklvqtynfx.supabase.co';
+let sb=null,user=null,profile=null;
+const $=id=>document.getElementById(id);
+function message(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>{$('toast').style.display='none'},4000)}
+function status(s){$('status').textContent=s}
+async function connect(key){
+ try{sb=createClient(URL,key.trim());const {data,error}=await sb.from('matches').select('id').limit(1);if(error)throw error;
+ localStorage.setItem('fanscore_public_key',key.trim());$('setup').style.display='none';$('auth').style.display='block';status('🟢 Connexion à la base réussie');await loadMatches();await loadRanking();await restoreSession();
+ }catch(e){sb=null;status('Connexion échouée : '+e.message);message('Vérifie que tu as copié la clé Publishable/anon, pas une clé secrète.')}
+}
+$('connect').onclick=()=>connect($('key').value);
+const saved=localStorage.getItem('fanscore_public_key');if(saved){$('key').value=saved;connect(saved)}
+$('signup').onclick=async()=>{if(!sb)return;let nick=$('nickname').value.trim(),email=$('email').value.trim(),password=$('password').value;if(!nick||!email||!password){$('authmsg').textContent='Remplis pseudo, e-mail et mot de passe.';return}
+let {data,error}=await sb.auth.signUp({email,password,options:{data:{nickname:nick}}});if(error){$('authmsg').textContent=error.message;return}
+if(data.user&&data.session){user=data.user;await createProfile(nick);$('authmsg').textContent='Compte créé !';await refreshProfile()}else{$('authmsg').textContent='Compte créé. Vérifie ton e-mail si Supabase le demande, puis connecte-toi.'}
+};
+$('login').onclick=async()=>{let {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('authmsg').textContent=error.message;return}user=data.user;await ensureProfile();$('authmsg').textContent='Connecté !';await refreshProfile();await loadMatches();};
+$('logout').onclick=async()=>{await sb.auth.signOut();user=null;profile=null;$('logout').style.display='none';$('profileinfo').textContent='Connecte-toi pour afficher ton profil.';$('authmsg').textContent='Déconnecté.';await loadMatches()};
+async function restoreSession(){let {data}=await sb.auth.getSession();if(data.session){user=data.session.user;await ensureProfile();await refreshProfile();}}
+async function createProfile(nick){let {error}=await sb.from('players').insert({id:user.id,nickname:nick,points:100});if(error&&error.code!=='23505')$('authmsg').textContent='Compte créé, profil à finaliser : '+error.message;}
+async function ensureProfile(){let {data}=await sb.from('players').select('*').eq('id',user.id).maybeSingle();profile=data;if(!data){let nick=user.user_metadata?.nickname||user.email.split('@')[0];await createProfile(nick);let {data:d}=await sb.from('players').select('*').eq('id',user.id).maybeSingle();profile=d;}}
+async function refreshProfile(){await ensureProfile();$('logout').style.display='inline-block';$('profileinfo').innerHTML=profile?`<b>${escapeHtml(profile.nickname)}</b><p>⭐ ${profile.points} points</p>`:'Profil en cours de création';}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+async function loadMatches(){if(!sb)return;let {data,error}=await sb.from('matches').select('*').order('match_date',{ascending:true});if(error){$('matches').textContent=error.message;return}if(!data.length){$('matches').innerHTML='<div class="card">Aucun match pour le moment. Nous ajouterons les rencontres bientôt.</div>';return}
+$('matches').innerHTML=data.map(m=>`<div class="match" data-id="${m.id}"><small>${new Date(m.match_date).toLocaleString()}</small><div class="teams"><div class="team">${escapeHtml(m.home_team)}</div><div class="versus">VS</div><div class="team">${escapeHtml(m.away_team)}</div></div><div class="choices"><button class="choice" data-p="1">1</button><button class="choice" data-p="X">Nul</button><button class="choice" data-p="2">2</button></div></div>`).join('');
+$('matches').querySelectorAll('.choice').forEach(b=>b.onclick=()=>submitPrediction(b))}
+async function submitPrediction(btn){if(!user){message('Crée un compte ou connecte-toi pour pronostiquer.');return}let card=btn.closest('.match'),match=card.dataset.id,p=btn.dataset.p;let {data:existing}=await sb.from('predictions').select('id').eq('match_id',match).eq('player_id',user.id).maybeSingle();if(existing){message('Tu as déjà pronostiqué ce match.');return}
+let {error}=await sb.from('predictions').insert({player_id:user.id,match_id:match,predicted_home:p==='1'?1:0,predicted_away:p==='2'?1:0});
+if(error){message('Erreur : '+error.message);return}card.querySelectorAll('button').forEach(x=>x.disabled=true);btn.classList.add('selected');message('Pronostic enregistré ! (choix sauvegardé)');}
+async function loadRanking(){if(!sb)return;let {data,error}=await sb.from('players').select('nickname,points').order('points',{ascending:false}).limit(50);if(error){$('leaders').textContent=error.message;return}if(!data.length){$('leaders').textContent='Le classement apparaîtra quand les joueurs auront créé leurs comptes.';return}$('leaders').innerHTML=data.map((p,i)=>`<div class="leader"><div class="rank">${i+1}</div><div class="name">${escapeHtml(p.nickname)}</div><div class="score">${p.points} pts</div></div>`).join('')}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.page).classList.add('active');if(b.dataset.page==='ranking')loadRanking();if(b.dataset.page==='profile'&&user)refreshProfile()});
+</script></body></html>
