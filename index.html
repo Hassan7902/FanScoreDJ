@@ -34,25 +34,30 @@ h1{color:#4ade80}
 
 <script>
 const URL="https://seegkcomvgqklvqtynfx.supabase.co";
+
 async function connect(){
  const key=document.getElementById("key").value.trim();
  const status=document.getElementById("status");
- if(!key){status.innerText="Colle d'abord ta clé publique.";return;}
+ if(!key){
+  status.innerText="Colle d'abord ta clé publique.";
+  return;
+ }
  status.innerText="Connexion en cours...";
  try{
   const r=await fetch(URL+"/rest/v1/players?select=*&limit=1",{
-   headers:{"apikey":key,"Authorization":"Bearer "+key}
+   headers:{"apikey":key}
   });
   if(r.ok){
    localStorage.setItem("fanscore_key",key);
    status.innerText="✅ FanScore DJ est connecté à Supabase !";
   }else{
-   status.innerText="Erreur de connexion ("+r.status+"). Vérifie la clé et les autorisations.";
+   status.innerText="Erreur "+r.status+". Vérifie la clé publique.";
   }
  }catch(e){
   status.innerText="Connexion impossible. Vérifie Internet.";
  }
 }
+
 const saved=localStorage.getItem("fanscore_key");
 if(saved){document.getElementById("key").value=saved;}
 </script>
