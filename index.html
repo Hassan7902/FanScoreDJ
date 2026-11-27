@@ -1,71 +1,60 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1511">
-<title>FanScore DJ — Pronostics gratuits</title>
+<title>FanScore DJ</title>
 <style>
-:root{--bg:#0b1511;--panel:#14211b;--line:#294033;--green:#56df89;--muted:#a2b8aa;--text:#f1f8f3}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-.app{max-width:500px;margin:auto;min-height:100vh;background:#0e1913}
-header{padding:22px 18px 16px;background:linear-gradient(135deg,#1d603b,#10281b);position:sticky;top:0;z-index:2}
-.brand{font-size:23px;font-weight:900;letter-spacing:-.5px}.brand span{color:var(--green)}.tag{font-size:12px;color:#c5e8d0;margin-top:4px}
-.headerrow{display:flex;align-items:center;justify-content:space-between;margin-top:15px}.points{background:#244a34;padding:8px 12px;border-radius:12px;color:#b5ffd0;font-weight:700;font-size:12px}
-.langs{display:flex;gap:5px}.lang{border:1px solid #47624f;background:#163021;color:#e0f3e6;border-radius:8px;padding:6px 8px;font-size:11px;cursor:pointer}.lang.active{background:#65df90;color:#0b2113;border-color:#65df90}
-main{padding:15px}.view{display:none}.view.active{display:block}.heading{font-size:21px;font-weight:850;margin:4px 0}.muted{font-size:12px;color:var(--muted)}
-.banner{background:linear-gradient(110deg,#1d6d43,#15502f);padding:15px;border-radius:17px;margin:14px 0}.banner .label{display:inline-block;background:#b7ffd0;color:#123d24;font-size:10px;font-weight:900;padding:5px 8px;border-radius:7px;margin-bottom:8px}.banner h3{margin:0 0 5px}.banner p{margin:0;font-size:12px;color:#d7f4df}
-.section{display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px;font-weight:750}.section small{color:var(--green);font-weight:600}
-.match{border:1px solid var(--line);background:var(--panel);padding:13px;border-radius:16px;margin-bottom:11px}.league{display:flex;justify-content:space-between;color:#91aa9a;font-size:10px;margin-bottom:11px}.teams{display:flex;align-items:center;justify-content:space-between;text-align:center}.team{width:37%;font-weight:750;font-size:12px}.emblem{font-size:25px;margin-bottom:4px}.versus{color:var(--green);font-weight:900;font-size:12px}.choices{display:flex;gap:6px;margin-top:12px}.choice{flex:1;border:1px solid #354c3d;background:#203027;color:#d2e2d7;border-radius:9px;padding:9px 4px;font-size:11px;font-weight:800;cursor:pointer}.choice.selected{background:var(--green);color:#0b2414;border-color:var(--green)}.choice:disabled{opacity:.7}.note{text-align:center;color:#8fa99a;font-size:10px;margin-top:7px}
-.toast{display:none;background:#285b3b;color:#d1ffdf;padding:10px;border-radius:10px;margin:10px 0;font-size:12px}
-.leader{display:flex;align-items:center;gap:10px;padding:11px;border-bottom:1px solid #26372e}.rank{width:25px;font-weight:900;color:#8eeab1}.avatar{width:34px;height:34px;border-radius:50%;background:#263e30;display:grid;place-items:center}.name{flex:1;font-size:13px}.score{font-size:12px;font-weight:900;color:#80e8a4}
-.profile{text-align:center;background:#17271e;padding:17px;border-radius:16px;margin-top:12px}.profile .avatarbig{font-size:42px}.stats{display:flex;gap:7px;margin-top:13px}.stat{flex:1;background:#203328;border-radius:11px;padding:10px 4px}.stat strong{display:block;font-size:19px;color:var(--green)}.stat small{font-size:10px;color:#adc2b4}
-.sponsor{border:1px dashed #43604c;background:#15231a;border-radius:14px;padding:14px;margin:11px 0;font-size:12px;color:#bfd4c5}
-nav{position:sticky;bottom:0;display:flex;background:#101c16;border-top:1px solid #293b31;justify-content:space-around;padding:8px 2px;z-index:2}.tab{border:0;background:transparent;color:#91a99a;padding:5px;font-size:11px;cursor:pointer}.tab.active{color:var(--green);font-weight:900}.tab span{display:block;font-size:18px;margin-bottom:2px}
-footer{text-align:center;color:#718b7b;font-size:10px;padding:14px}
+body{margin:0;background:#071426;color:white;font-family:Arial,sans-serif;text-align:center;padding:20px}
+.card{background:#13263e;padding:20px;border-radius:16px;max-width:450px;margin:20px auto}
+input,button{width:100%;padding:13px;margin:8px 0;border-radius:9px;box-sizing:border-box}
+input{border:1px solid #52657d;background:#071426;color:white}
+button{border:0;background:#16a34a;color:white;font-weight:bold;cursor:pointer}
+h1{color:#4ade80}
+.small{color:#b8c5d6;font-size:14px}
 </style>
 </head>
 <body>
-<div class="app">
-<header>
-<div class="brand">⚽ FAN<span>SCORE</span> DJ</div><div class="tag" data-i="tag">Le football. Tes pronostics. Ton classement.</div>
-<div class="headerrow"><div><b data-i="welcome">Bienvenue, Fan !</b><div class="tag" data-i="ready">Prêt à pronostiquer ?</div></div><div class="points">⭐ <span id="points">100</span> pts</div></div>
-<div class="langs" style="margin-top:12px"><button class="lang active" data-lang="fr">FR</button><button class="lang" data-lang="so">SO</button><button class="lang" data-lang="ar">AR</button></div>
-</header>
-<main>
-<section id="home" class="view active">
-<div class="heading" data-i="today">Matchs à venir ⚡</div><div class="muted" data-i="free">Pronostics gratuits • Aucun argent à miser</div>
-<div class="banner"><span class="label" data-i="challenge">CHALLENGE GRATUIT</span><h3 data-i="challengeTitle">🏆 Défi FanScore</h3><p data-i="challengeDesc">Prédit les matchs, accumule des points et grimpe au classement !</p></div>
-<div id="toast" class="toast"></div>
-<div class="section"><span data-i="fixtures">⚽ Matchs de démonstration</span><small>3</small></div>
-<div class="match" data-match="a"><div class="league"><span>🇪🇸 LA LIGA</span><span>20:00</span></div><div class="teams"><div class="team"><div class="emblem">⚪</div>Real Madrid</div><div class="versus">VS</div><div class="team"><div class="emblem">🔵🔴</div>Barcelona</div></div><div class="choices"><button class="choice" data-p="1">Real</button><button class="choice" data-p="X">Nul</button><button class="choice" data-p="2">Barça</button></div><div class="note" data-i="pointsNote">+5 points de participation • +10 si correct</div></div>
-<div class="match" data-match="b"><div class="league"><span>🏴 PREMIER LEAGUE</span><span>21:00</span></div><div class="teams"><div class="team"><div class="emblem">🔴</div>Arsenal</div><div class="versus">VS</div><div class="team"><div class="emblem">🔵</div>Man City</div></div><div class="choices"><button class="choice" data-p="1">Arsenal</button><button class="choice" data-p="X">Nul</button><button class="choice" data-p="2">Man City</button></div><div class="note" data-i="pointsNote">+5 points de participation • +10 si correct</div></div>
-<div class="match" data-match="c"><div class="league"><span>🇮🇹 SERIE A</span><span>22:00</span></div><div class="teams"><div class="team"><div class="emblem">⚫🔵</div>Inter</div><div class="versus">VS</div><div class="team"><div class="emblem">🔴</div>Milan</div></div><div class="choices"><button class="choice" data-p="1">Inter</button><button class="choice" data-p="X">Nul</button><button class="choice" data-p="2">Milan</button></div><div class="note" data-i="pointsNote">+5 points de participation • +10 si correct</div></div>
-<div class="sponsor"><b>🤝 Espace sponsor</b><br>Votre marque peut soutenir les défis gratuits FanScore DJ.</div>
-</section>
-<section id="ranking" class="view"><div class="heading" data-i="rankTitle">🏆 Classement hebdomadaire</div><div class="muted" data-i="rankDesc">Les meilleurs pronostiqueurs de la semaine</div><div class="banner"><span class="label">LIGUE DJ</span><h3 data-i="rankBanner">Ta place dans la communauté</h3><p data-i="rankBannerDesc">Joue gratuitement et grimpe au classement.</p></div>
-<div class="leader"><div class="rank">🥇</div><div class="avatar">🦁</div><div class="name"><b>Ahmed_FC</b><div class="muted">12 réussites</div></div><div class="score">460 pts</div></div>
-<div class="leader"><div class="rank">🥈</div><div class="avatar">⚽</div><div class="name"><b>FootDj</b><div class="muted">10 réussites</div></div><div class="score">390 pts</div></div>
-<div class="leader"><div class="rank">🥉</div><div class="avatar">🔥</div><div class="name"><b>Youssouf_7</b><div class="muted">9 réussites</div></div><div class="score">350 pts</div></div>
-<div class="leader"><div class="rank">4</div><div class="avatar">🙂</div><div class="name"><b data-i="you">Toi</b><div class="muted" data-i="keep">Continue à jouer gratuitement</div></div><div class="score" id="myrank">100 pts</div></div>
-</section>
-<section id="profile" class="view"><div class="heading" data-i="profileTitle">👤 Mon profil</div><div class="profile"><div class="avatarbig">⚽</div><h3>FanScore User</h3><div class="muted" data-i="member">Membre de FanScore DJ</div><div class="stats"><div class="stat"><strong id="profilepts">100</strong><small data-i="pts">Points</small></div><div class="stat"><strong id="count">0</strong><small data-i="preds">Pronostics</small></div><div class="stat"><strong>—</strong><small data-i="accuracy">Réussite</small></div></div></div>
-<div class="section"><span data-i="rewards">🎁 Récompenses</span></div><div class="match"><b data-i="giftTitle">Cadeaux offerts par les sponsors</b><p class="muted" data-i="giftDesc">Les récompenses sont gratuites. Aucun achat ou mise nécessaire.</p></div>
-<div class="sponsor"><b data-i="partner">Devenir partenaire</b><br><span data-i="partnerDesc">Les entreprises peuvent sponsoriser les compétitions et faire connaître leurs offres.</span></div></section>
-</main>
-<nav><button class="tab active" data-page="home"><span>🏠</span><b data-i="navHome">Accueil</b></button><button class="tab" data-page="ranking"><span>🏆</span><b data-i="navRank">Classement</b></button><button class="tab" data-page="profile"><span>👤</span><b data-i="navProfile">Profil</b></button></nav>
-<footer data-i="disclaimer">Prototype de démonstration • Matchs et horaires fictifs • Jeu gratuit sans mise</footer>
+<h1>⚽ FanScore DJ</h1>
+<p>Pronostics football gratuits à Djibouti</p>
+
+<div class="card">
+<h2>Connexion à la base de données</h2>
+<input id="key" placeholder="Colle ici ta clé publique Supabase">
+<button onclick="connect()">Connecter FanScore DJ</button>
+<p id="status">Base de données non connectée</p>
 </div>
+
+<div class="card">
+<h2>Bienvenue !</h2>
+<p class="small">Pronostique gratuitement. Gagne des points. Défie tes amis.</p>
+<p>⚽ Pas d'argent misé. Aucun pari réel.</p>
+</div>
+
 <script>
-const translations={
-fr:{tag:"Le football. Tes pronostics. Ton classement.",welcome:"Bienvenue, Fan !",ready:"Prêt à pronostiquer ?",today:"Matchs à venir ⚡",free:"Pronostics gratuits • Aucun argent à miser",challenge:"CHALLENGE GRATUIT",challengeTitle:"🏆 Défi FanScore",challengeDesc:"Prédit les matchs, accumule des points et grimpe au classement !",fixtures:"⚽ Matchs de démonstration",pointsNote:"+5 points de participation • +10 si correct",rankTitle:"🏆 Classement hebdomadaire",rankDesc:"Les meilleurs pronostiqueurs de la semaine",rankBanner:"Ta place dans la communauté",rankBannerDesc:"Joue gratuitement et grimpe au classement.",you:"Toi",keep:"Continue à jouer gratuitement",profileTitle:"👤 Mon profil",member:"Membre de FanScore DJ",pts:"Points",preds:"Pronostics",accuracy:"Réussite",rewards:"🎁 Récompenses",giftTitle:"Cadeaux offerts par les sponsors",giftDesc:"Les récompenses sont gratuites. Aucun achat ou mise nécessaire.",partner:"Devenir partenaire",partnerDesc:"Les entreprises peuvent sponsoriser les compétitions et faire connaître leurs offres.",navHome:"Accueil",navRank:"Classement",navProfile:"Profil",disclaimer:"Prototype de démonstration • Matchs et horaires fictifs • Jeu gratuit sans mise",saved:"Pronostic enregistré ! +5 points gratuits 🎉",already:"Tu as déjà pronostiqué ce match !"},
-so:{tag:"Kubadda. Saadaashaada. Darajadaada.",welcome:"Ku soo dhawoow, Fan!",ready:"Diyaar ma u tahay saadaal?",today:"Ciyaaraha soo socda ⚡",free:"Saadaal bilaash ah • Lacag laguma khamaarayo",challenge:"TARTAN BILAASH AH",challengeTitle:"🏆 FanScore Challenge",challengeDesc:"Saadaali ciyaaraha, ururi dhibco oo kor u kac darajada!",fixtures:"⚽ Ciyaaro tijaabo ah",pointsNote:"+5 dhibcood ka qaybgal • +10 haddii sax",rankTitle:"🏆 Darajada toddobaadka",rankDesc:"Saadaaliyayaasha ugu fiican toddobaadkan",rankBanner:"Booskaaga bulshada",rankBannerDesc:"Si bilaash ah u ciyaar oo darajada kor u kac.",you:"Adiga",keep:"Sii wad ciyaarta bilaashka ah",profileTitle:"👤 Profile-kayga",member:"Xubin FanScore DJ",pts:"Dhibco",preds:"Saadaal",accuracy:"Saxnaan",rewards:"🎁 Abaalmarin",giftTitle:"Hadiyado ay bixiyaan kafaala-qaadayaashu",giftDesc:"Abaalmarintu waa bilaash. Lacag ama sharad looma baahna.",partner:"Noqo lammaane",partnerDesc:"Ganacsiyadu waxay kafaala-qaadi karaan tartamada oo soo bandhigi karaan dalabkooda.",navHome:"Hoy",navRank:"Darajo",navProfile:"Profile",disclaimer:"Tijaabo • Ciyaaraha iyo saacadaha waa tusaale • Bilaash, sharad la'aan",saved:"Saadaasha waa la diiwaangeliyey! +5 dhibco bilaash ah 🎉",already:"Ciyaartan mar hore ayaad saadaalisay."},
-ar:{tag:"كرة القدم. توقعاتك. ترتيبك.",welcome:"أهلاً بك يا مشجع!",ready:"هل أنت مستعد للتوقع؟",today:"المباريات القادمة ⚡",free:"توقعات مجانية • لا توجد رهانات مالية",challenge:"تحدٍ مجاني",challengeTitle:"🏆 تحدي FanScore",challengeDesc:"توقع المباريات واجمع النقاط وارتقِ في الترتيب!",fixtures:"⚽ مباريات تجريبية",pointsNote:"+5 نقاط للمشاركة • +10 إذا كان التوقع صحيحاً",rankTitle:"🏆 ترتيب الأسبوع",rankDesc:"أفضل المتوقعين هذا الأسبوع",rankBanner:"مكانك في المجتمع",rankBannerDesc:"العب مجاناً وارتقِ في الترتيب.",you:"أنت",keep:"واصل اللعب مجاناً",profileTitle:"👤 ملفي",member:"عضو FanScore DJ",pts:"نقاط",preds:"توقعات",accuracy:"الدقة",rewards:"🎁 المكافآت",giftTitle:"هدايا يقدمها الرعاة",giftDesc:"المكافآت مجانية. لا حاجة للشراء أو الرهان.",partner:"كن شريكاً",partnerDesc:"يمكن للشركات رعاية المسابقات وعرض عروضها.",navHome:"الرئيسية",navRank:"الترتيب",navProfile:"ملفي",disclaimer:"نسخة تجريبية • المباريات والأوقات وهمية • لعبة مجانية دون رهان",saved:"تم حفظ توقعك! +5 نقاط مجانية 🎉",already:"لقد توقعت هذه المباراة بالفعل."}};
-let pts=100,n=0,chosen={};function tr(k){return translations[document.documentElement.lang||'fr'][k]||translations.fr[k]}
-document.querySelectorAll('.lang').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.lang').forEach(b=>b.classList.remove('active'));btn.classList.add('active');let lang=btn.dataset.lang;document.documentElement.lang=lang;document.querySelectorAll('[data-i]').forEach(el=>el.textContent=tr(el.dataset.i));document.querySelectorAll('.note').forEach(el=>el.textContent=tr('pointsNote'));}));
-document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.page).classList.add('active');}));
-document.querySelectorAll('.choice').forEach(btn=>btn.addEventListener('click',()=>{let match=btn.closest('.match').dataset.match;if(chosen[match]){toast(tr('already'));return;}chosen[match]=btn.dataset.p;n++;pts+=5;btn.closest('.choices').querySelectorAll('.choice').forEach(b=>{b.disabled=true;b.classList.remove('selected')});btn.classList.add('selected');document.getElementById('points').textContent=pts;document.getElementById('profilepts').textContent=pts;document.getElementById('myrank').textContent=pts+' pts';document.getElementById('count').textContent=n;toast(tr('saved'));}));
-function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display='none',2800)}
+const URL="https://seegkcomvgqklvqtynfx.supabase.co";
+async function connect(){
+ const key=document.getElementById("key").value.trim();
+ const status=document.getElementById("status");
+ if(!key){status.innerText="Colle d'abord ta clé publique.";return;}
+ status.innerText="Connexion en cours...";
+ try{
+  const r=await fetch(URL+"/rest/v1/players?select=*&limit=1",{
+   headers:{"apikey":key,"Authorization":"Bearer "+key}
+  });
+  if(r.ok){
+   localStorage.setItem("fanscore_key",key);
+   status.innerText="✅ FanScore DJ est connecté à Supabase !";
+  }else{
+   status.innerText="Erreur de connexion ("+r.status+"). Vérifie la clé et les autorisations.";
+  }
+ }catch(e){
+  status.innerText="Connexion impossible. Vérifie Internet.";
+ }
+}
+const saved=localStorage.getItem("fanscore_key");
+if(saved){document.getElementById("key").value=saved;}
 </script>
 </body>
 </html>
