@@ -6,60 +6,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FanScore DJ</title>
 <style>
-body{margin:0;background:#071426;color:white;font-family:Arial,sans-serif;text-align:center;padding:20px}
-.card{background:#13263e;padding:20px;border-radius:16px;max-width:450px;margin:20px auto}
-input,button{width:100%;padding:13px;margin:8px 0;border-radius:9px;box-sizing:border-box}
-input{border:1px solid #52657d;background:#071426;color:white}
-button{border:0;background:#16a34a;color:white;font-weight:bold;cursor:pointer}
+body{margin:0;padding:20px;background:#071426;color:white;font-family:Arial;text-align:center}
+.card{max-width:430px;margin:20px auto;padding:20px;background:#13263e;border-radius:15px}
 h1{color:#4ade80}
-.small{color:#b8c5d6;font-size:14px}
+input,button{width:100%;box-sizing:border-box;padding:13px;margin:8px 0;border-radius:9px}
+input{background:#071426;color:white;border:1px solid #52657d}
+button{background:#16a34a;color:white;border:0;font-weight:bold;cursor:pointer}
+#status{overflow-wrap:anywhere;color:#facc15}
 </style>
 </head>
 <body>
 <h1>⚽ FanScore DJ</h1>
-<p>Pronostics football gratuits à Djibouti</p>
+<p>Les pronostics gratuits de Djibouti</p>
 
 <div class="card">
-<h2>Connexion à la base de données</h2>
-<input id="key" placeholder="Colle ici ta clé publique Supabase">
-<button onclick="connect()">Connecter FanScore DJ</button>
+<h2>Connexion à FanScore DJ</h2>
+<input id="key" placeholder="Clé publique Supabase">
+<button onclick="connect()">Connecter</button>
 <p id="status">Base de données non connectée</p>
 </div>
 
-<div class="card">
-<h2>Bienvenue !</h2>
-<p class="small">Pronostique gratuitement. Gagne des points. Défie tes amis.</p>
-<p>⚽ Pas d'argent misé. Aucun pari réel.</p>
+<div class="card" id="account" hidden>
+<h2>Créer ton compte</h2>
+<input id="username" maxlength="25" placeholder="Choisis ton pseudo">
+<button onclick="createProfile()">Créer mon compte</button>
+<p id="profileStatus"></p>
 </div>
 
+<div class="card" id="welcome" hidden>
+<h2>Bienvenue sur FanScore DJ !</h2>
+<p id="playerName"></p>
+<p id="playerPoints"></p>
+<p>⚽ Pronostics gratuits, sans argent misé.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const URL="https://seegkcomvgqklvqtynfx.supabase.co";
+const PROJECT_URL="https://seegkcomvgqklvqtynfx.supabase.co";
+let db=null;
+let player=null;
 
 async function connect(){
  const key=document.getElementById("key").value.trim();
  const status=document.getElementById("status");
- if(!key){
-  status.innerText="Colle d'abord ta clé publique.";
-  return;
- }
- status.innerText="Connexion en cours...";
+ if(!key){status.innerText="Entre ta clé publique.";return;}
+ status.innerText="Connexion...";
  try{
-  const r=await fetch(URL+"/rest/v1/players?select=*&limit=1",{
-   headers:{"apikey":key}
-  });
-  if(r.ok){
-   localStorage.setItem("fanscore_key",key);
-   status.innerText="✅ FanScore DJ est connecté à Supabase !";
-  }else{
-   status.innerText="Erreur "+r.status+": "+await r.text();
-  }
+  db=window.supabase.createClient(PROJECT_URL,key);
+  const {data,error}=await db.auth.getSession();
+  if(error) throw error;
+  localStorage.setItem("fanscore_key",key);
+  status.innerText="✅ Base de données connectée !";
+  await startAccount();
  }catch(e){
-  status.innerText="Connexion impossible. Vérifie Internet.";
+  status.innerText="Erreur : "+e.message;
  }
 }
 
+async function startAccount(){
+ const box=document.getElementById("account");
+ const welcome=document.getElementById("welcome");
+ const {data:{session},error}=await db.auth.getSession();
+ if(error) throw error;
+ let user=session?.user;
+ if(!user){
+  const result=await db.auth.signInAnonymously();
+  if(result.error) throw result.error;
+  user=result.data.user;
+ }
+ const result=await db.from("players").select("*").eq("id",user.id).maybeSingle();
+ if(result.error) throw result.error;
+ if(result.data){
+  player=result.data;
+  showPlayer();
+ }else{
+  box.hidden=false;
+ }
+}
+
+async function createProfile(){
+ const username=document.getElementById("username").value.trim();
+ const message=document.getElementById("profileStatus");
+ if(username.length<3){message.innerText="Choisis un pseudo de 3 caractères minimum.";return;}
+ message.innerText="Création du compte...";
+ const {data:{user},error:authError}=await db.auth.getUser();
+ if(authError||!user){message.innerText="Reconnecte-toi.";return;}
+ const {data,error}=await db.from("players").insert({
+  id:user.id,username:username,points:0
+ }).select().single();
+ if(error){message.innerText="Erreur : "+error.message;return;}
+ player=data;
+ showPlayer();
+}
+
+function showPlayer(){
+ document.getElementById("account").hidden=true;
+ document.getElementById("welcome").hidden=false;
+ document.getElementById("playerName").innerText="Pseudo : "+player.username;
+ document.getElementById("playerPoints").innerText="Points : "+player.points;
+}
+
 const saved=localStorage.getItem("fanscore_key");
-if(saved){document.getElementById("key").value=saved;}
+if(saved) document.getElementById("key").value=saved;
 </script>
 </body>
 </html>
