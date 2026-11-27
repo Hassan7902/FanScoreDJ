@@ -85,14 +85,14 @@ async function startAccount(){
 }
 
 async function createProfile(){
- const =document.getElementById("").value.trim();
+ const nickname = document.getElementById("nickname").value.trim();
  const message=document.getElementById("profileStatus");
- if(.length<3){message.innerText="Choisis un pseudo de 3 caractères minimum.";return;}
+ if(nickname.length<3){message.innerText="Choisis un pseudo de 3 caractères minimum.";return;}
  message.innerText="Création du compte...";
  const {data:{user},error:authError}=await db.auth.getUser();
  if(authError||!user){message.innerText="Reconnecte-toi.";return;}
  const {data,error}=await db.from("players").insert({
-  id:user.id,:,points:0
+  id:user.id,nickname:nickname,points:0
  }).select().single();
  if(error){message.innerText="Erreur : "+error.message;return;}
  player=data;
@@ -102,7 +102,7 @@ async function createProfile(){
 function showPlayer(){
  document.getElementById("account").hidden=true;
  document.getElementById("welcome").hidden=false;
- document.getElementById("playerName").innerText="Pseudo : "+player.;
+ document.getElementById("playerName").innerText="Pseudo : "+player.nickname;
  document.getElementById("playerPoints").innerText="Points : "+player.points;
 }
 
