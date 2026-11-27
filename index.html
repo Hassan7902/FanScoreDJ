@@ -28,7 +28,7 @@ button{background:#16a34a;color:white;border:0;font-weight:bold;cursor:pointer}
 
 <div class="card" id="account" hidden>
 <h2>Créer ton compte</h2>
-<input id="username" maxlength="25" placeholder="Choisis ton pseudo">
+<input id="nickname" maxlength="25" placeholder="Choisis ton pseudo">
 <button onclick="createProfile()">Créer mon compte</button>
 <p id="profileStatus"></p>
 </div>
@@ -85,14 +85,14 @@ async function startAccount(){
 }
 
 async function createProfile(){
- const username=document.getElementById("username").value.trim();
+ const =document.getElementById("").value.trim();
  const message=document.getElementById("profileStatus");
- if(username.length<3){message.innerText="Choisis un pseudo de 3 caractères minimum.";return;}
+ if(.length<3){message.innerText="Choisis un pseudo de 3 caractères minimum.";return;}
  message.innerText="Création du compte...";
  const {data:{user},error:authError}=await db.auth.getUser();
  if(authError||!user){message.innerText="Reconnecte-toi.";return;}
  const {data,error}=await db.from("players").insert({
-  id:user.id,username:username,points:0
+  id:user.id,:,points:0
  }).select().single();
  if(error){message.innerText="Erreur : "+error.message;return;}
  player=data;
@@ -102,7 +102,7 @@ async function createProfile(){
 function showPlayer(){
  document.getElementById("account").hidden=true;
  document.getElementById("welcome").hidden=false;
- document.getElementById("playerName").innerText="Pseudo : "+player.username;
+ document.getElementById("playerName").innerText="Pseudo : "+player.;
  document.getElementById("playerPoints").innerText="Points : "+player.points;
 }
 
