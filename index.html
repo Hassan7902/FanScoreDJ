@@ -51,7 +51,7 @@ async function connect(){
    localStorage.setItem("fanscore_key",key);
    status.innerText="✅ FanScore DJ est connecté à Supabase !";
   }else{
-   status.innerText="Erreur "+r.status+". Vérifie la clé publique.";
+   status.innerText="Erreur "+r.status+": "+await r.text();
   }
  }catch(e){
   status.innerText="Connexion impossible. Vérifie Internet.";
